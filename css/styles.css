@@ -1,0 +1,204 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #F0F0F0;
+    color: #333;
+}
+
+header {
+    background: rgba(255, 255, 255, 1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 10px 10px;
+}
+
+section {
+    padding: 40px 20px;
+    max-width: 930px;
+    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+.navbar {
+    width: 100%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    padding: 10px 20px;
+}
+
+.navbar-content ul {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar-content ul li {
+    margin: 0 20px;
+}
+
+.navbar-content ul li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.navbar-content ul li a:hover {
+    color: #065F8D;
+}
+
+.hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    overflow: hidden;
+    color: rgb(85, 85, 85);
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.logo {
+    width: 120px; /* Adjust based on your logo */
+    margin-bottom: 20px;
+}
+
+
+.hero h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.hero h2 {
+    font-size: 1.75em;
+    margin-bottom: 15px;
+    font-weight: 50;
+    color: #757575;
+}
+
+.hero p {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    font-size: 36px;
+}
+
+h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    font-size: 30px;
+}
+
+h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.blog-container, .project-container {
+    display: flex;
+    overflow: hidden; /* Hide the scrollbar */
+    padding: 10px 0;
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+.blog-container div, .project-container div {
+    background: white;
+    border-radius: 8px;
+    margin: 10px;
+    padding: 20px;
+    min-width: 250px;
+    max-height: 400px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+    display: flex;               /* Use flexbox for horizontal layout */
+    overflow-x: auto;           /* Enable horizontal scrolling */
+    white-space: wrap;        /* Prevent line breaks */
+    vertical-align: top;        /* Align to the top */  
+    width: 100%;                /* Set width to your desired value */
+    max-width: 100%;            /* Ensure it doesn't exceed the parent's width */
+    overflow: hidden;           /* Hide the scrollbar */
+    border: 1px solid #ccc;  
+    display: inline-block; /* Allow inline display for horizontal scroll */
+}
+
+.blog-container div:hover, .project-container div:hover {
+    transform: scale(1.05);
+}
+
+
+
+.social-icons {
+    display: flex;
+    justify-content: center; /* Center align icons */
+    gap: 20px; /* Space between icons */
+}
+
+.social-icons a {
+    text-decoration: none; /* Remove underline */
+    color: #333; /* Icon color */
+    font-weight: 600; /* Font weight */
+    display: flex; /* Flexbox for aligning icon and text */
+    align-items: center; /* Center icon and text vertically */
+    transition: transform 0.3s; /* Smooth scaling on hover */
+}
+
+.social-icons a:hover {
+    color: #065F8D;
+    transform: scale(1.1); /* Scale effect on hover */
+}
+
+.social-icons a i {
+    margin-right: 10px; /* Space between icon and text */
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+}
+
+@media (max-width: 768px) {
+    h1 { font-size: 28px; }
+    h2 { font-size: 24px; }
+    h3 { font-size: 20px; }
+    p { font-size: 14px; }
+}
+
+#blog, #projects, #about {
+    padding: 70px 20px;
+    text-align: left;
+}
