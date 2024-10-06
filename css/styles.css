@@ -128,39 +128,6 @@ p {
     margin-bottom: 20px;
 }
 
-.blog-container, .project-container {
-    display: flex;
-    overflow: hidden; /* Hide the scrollbar */
-    padding: 10px 0;
-    white-space: nowrap; /* Prevent wrapping */
-}
-
-.blog-container div, .project-container div {
-    background: white;
-    border-radius: 8px;
-    margin: 10px;
-    padding: 20px;
-    min-width: 250px;
-    max-height: 400px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s;
-    display: flex;               /* Use flexbox for horizontal layout */
-    overflow-x: auto;           /* Enable horizontal scrolling */
-    white-space: wrap;        /* Prevent line breaks */
-    vertical-align: top;        /* Align to the top */  
-    width: 100%;                /* Set width to your desired value */
-    max-width: 100%;            /* Ensure it doesn't exceed the parent's width */
-    overflow: hidden;           /* Hide the scrollbar */
-    border: 1px solid #ccc;  
-    display: inline-block; /* Allow inline display for horizontal scroll */
-}
-
-.blog-container div:hover, .project-container div:hover {
-    transform: scale(1.05);
-}
-
-
-
 .social-icons {
     display: flex;
     justify-content: center; /* Center align icons */
@@ -201,4 +168,55 @@ footer {
 #blog, #projects, #about {
     padding: 70px 20px;
     text-align: left;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section {
+    padding: 20px;
+}
+
+.scroll-container {
+    display: flex;
+    overflow-x: hidden; /* Hide scrollbar */
+    padding: 10px 0;
+}
+
+#blog-scroll,#projects-scroll {
+    display: flex;
+    flex-wrap: nowrap; /* Prevent wrapping to ensure horizontal scrolling */
+    overflow-x: hidden; /* Allow horizontal scrolling */
+    gap: 16px; /* Space between cards */
+    padding: 10px 0;
+    overflow: hidden;
+}
+
+.card {
+    flex: 0 0 300px; /* Fixed width for each card */
+    max-width: 300px; /* Ensure cards do not exceed this width */
+    max-height: 400 px; /* Ensure cards do not exceed this height */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-left: 16px; /* Space between cards */
+    border-radius: 8px;
+    padding: 20px;
+    overflow: hidden; /* Ensure contents do not overflow */
+}
+
+.card img {
+    width: 100%; /* Make images responsive */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+@keyframes scroll {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
 }
