@@ -1,79 +1,488 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Open+Sans:wght@400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="icon" href="images/logo.png" type="image/x-icon">
-    <title>Sanat Ladkat | Portfolio</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanat Ladkat</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Archivo:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --bg:#FAFAF8;
+    --surface:#FFFFFF;
+    --ink:#0A0A0A;
+    --ink-dim:#48453f;
+    --line:#0A0A0A;
+    --accent:#1D4ED8;
+    --accent-ink:#FFFFFF;
+    --shadow:#0A0A0A;
+    --font-mono:'Space Mono', 'Consolas', monospace;
+    --font-body:'Archivo', -apple-system, 'Segoe UI', sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0A0A0A; --surface:#151515; --ink:#F5F3EE; --ink-dim:#B7B3A9;
+      --line:#F5F3EE; --accent:#60A5FA; --accent-ink:#0A0A0A; --shadow:#F5F3EE;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0A0A0A; --surface:#151515; --ink:#F5F3EE; --ink-dim:#B7B3A9;
+    --line:#F5F3EE; --accent:#60A5FA; --accent-ink:#0A0A0A; --shadow:#F5F3EE;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  @media (prefers-reduced-motion:reduce){ html{ scroll-behavior:auto; } *{ transition:none !important; animation:none !important; } }
+
+  body{
+    margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+  }
+  ::selection{ background:var(--accent); color:var(--accent-ink); }
+
+  /* raw material: a faint grain over everything, like unfinished concrete */
+  .grain{
+    position:fixed; inset:0; z-index:60; pointer-events:none; opacity:0.05; mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  /* scanlines under the grain, a raw CRT/print-screen texture */
+  .scanlines{
+    position:fixed; inset:0; z-index:59; pointer-events:none; opacity:0.06;
+    background:repeating-linear-gradient(0deg, var(--ink) 0 1px, transparent 1px 3px);
+  }
+
+  /* oversized ghost numeral behind each section, the slab stamp */
+  section{ position:relative; overflow:hidden; }
+  .ghost{
+    position:absolute; top:-4vh; right:2vw; z-index:0; font-family:var(--font-mono); font-weight:700;
+    font-size:clamp(7rem,20vw,14rem); line-height:1; color:transparent; -webkit-text-stroke:2px var(--line);
+    opacity:0.1; pointer-events:none; user-select:none;
+  }
+  section > *:not(.ghost):not(.decor){ position:relative; z-index:1; }
+
+  /* viewfinder: four corner brackets, borrowed from a camera frame */
+  .vf{ position:absolute; width:30px; height:30px; border-color:var(--ink); z-index:0; pointer-events:none; }
+  .vf-tl{ top:18px; left:18px; border-top:3px solid; border-left:3px solid; }
+  .vf-tr{ top:18px; right:18px; border-top:3px solid; border-right:3px solid; }
+  .vf-bl{ bottom:18px; left:18px; border-bottom:3px solid; border-left:3px solid; }
+  .vf-br{ bottom:18px; right:18px; border-bottom:3px solid; border-right:3px solid; }
+
+  /* a rotating stamp seal, pure graphic, no reason but to turn */
+  .stamp-spin{ position:absolute; top:6vh; right:4vw; z-index:0; width:clamp(90px,12vw,140px); height:clamp(90px,12vw,140px); animation:spin 16s linear infinite; }
+  @media (prefers-reduced-motion:reduce){ .stamp-spin{ animation:none; } }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* a torn, stamped block behind a headline: honest, uneven, not a rounded card. inset from its section's own box, so it grows or shrinks with whatever content the section actually holds instead of a guessed fixed height */
+  .torn{
+    position:absolute; top:0; left:-16px; right:-16px; bottom:0; z-index:0;
+    background:var(--surface); border:3px solid var(--line);
+    clip-path:polygon(1% 12%, 18% 0%, 42% 5%, 63% 0%, 88% 7%, 100% 1%, 97% 88%, 79% 100%, 54% 93%, 28% 100%, 6% 90%, 0% 97%);
+  }
+
+  /* timeline markers down the story rows: this one really is a sequence */
+  .row-label{ display:flex; flex-direction:column; align-items:flex-start; gap:10px; }
+  .row h3{ display:flex; align-items:center; gap:12px; }
+  .row h3::before{ content:''; width:12px; height:12px; background:var(--accent); flex:none; }
+  .row .icon{ width:28px; height:28px; stroke:var(--ink); fill:none; stroke-width:1.6; flex:none; }
+
+  /* marquee ticker: a scrolling band of raw text, no easing, no subtlety */
+  .marquee{
+    overflow:hidden; white-space:nowrap; background:var(--ink);
+    border-top:3px solid var(--line); border-bottom:3px solid var(--line); padding:16px 0;
+    width:100vw; position:relative; left:50%; margin-left:-50vw;
+  }
+  .marquee .track{ display:inline-flex; animation:marquee 26s linear infinite; }
+  .marquee .track span{
+    display:inline-block; padding:0 28px; font-family:var(--font-mono); font-weight:700; font-size:1.05rem;
+    letter-spacing:0.08em; color:var(--bg); white-space:nowrap;
+  }
+  @keyframes marquee{ from{ transform:translateX(0); } to{ transform:translateX(-50%); } }
+  @media (prefers-reduced-motion:reduce){ .marquee .track{ animation:none; } }
+
+  /* hazard stripe: one hard graphic beat before the ask */
+  .hazard{ height:20px; background:repeating-linear-gradient(-45deg, var(--ink) 0 16px, var(--accent) 16px 32px); border-top:3px solid var(--line); border-bottom:3px solid var(--line); }
+
+  /* cursor trail: a graphic layer that follows the real cursor, never replaces it */
+  #trail{
+    position:fixed; top:0; left:0; width:34px; height:34px; border:3px solid var(--accent); border-radius:50%;
+    pointer-events:none; z-index:70; transform:translate3d(-50%,-50%,0); opacity:0; transition:opacity .2s ease, width .2s ease, height .2s ease;
+  }
+  #trail.on{ opacity:0.7; }
+  #trail.hover{ width:56px; height:56px; background:var(--accent); opacity:0.18; }
+  @media (pointer:coarse){ #trail{ display:none; } }
+
+  /* glitch: a brief flicker on the one name that matters */
+  @keyframes glitch{
+    0%,100%{ text-shadow:none; transform:translate(0,0); }
+    20%{ text-shadow:-3px 0 var(--accent), 3px 0 #e0393e; transform:translate(-1px,0); }
+    40%{ text-shadow:3px 0 var(--accent), -3px 0 #e0393e; transform:translate(1px,0); }
+    60%{ text-shadow:-2px 0 #e0393e, 2px 0 var(--accent); transform:translate(0,1px); }
+    80%{ text-shadow:2px 0 #e0393e, -2px 0 var(--accent); transform:translate(0,-1px); }
+  }
+  @keyframes glitch-text{
+    0%,100%{ text-shadow:none; }
+    20%{ text-shadow:-2px 0 var(--accent), 2px 0 #e0393e; }
+    40%{ text-shadow:2px 0 var(--accent), -2px 0 #e0393e; }
+    60%{ text-shadow:-1px 0 #e0393e, 1px 0 var(--accent); }
+    80%{ text-shadow:1px 0 #e0393e, -1px 0 var(--accent); }
+  }
+  @media (prefers-reduced-motion:no-preference){
+    .hero-name:hover, .title:hover{ animation:glitch 0.4s steps(2); }
+    .chip:hover, .navrow nav a:hover{ animation:glitch-text 0.3s steps(2); }
+  }
+  a{ color:inherit; }
+  h1,h2,h3{ margin:0; font-family:var(--font-mono); text-transform:uppercase; text-wrap:balance; line-height:1.05; }
+  a:focus-visible, button:focus-visible{ outline:3px solid var(--accent); outline-offset:3px; }
+
+  .wrap{ max-width:980px; margin:0 auto; padding:0 6vw; }
+
+  /* ---------------- top nav: always visible, honest, obvious ---------------- */
+  header.bar{
+    position:sticky; top:0; z-index:50; background:var(--bg); border-bottom:3px solid var(--line);
+  }
+  .navrow{ display:flex; align-items:center; justify-content:space-between; gap:16px; padding:16px 6vw; flex-wrap:wrap; }
+  .navrow .mark{ font-family:var(--font-mono); font-weight:700; font-size:1rem; text-decoration:none; letter-spacing:0.02em; }
+  .navrow nav{ display:flex; gap:4px; flex-wrap:wrap; }
+  .navrow nav a{
+    font-family:var(--font-mono); font-size:0.78rem; letter-spacing:0.04em; text-decoration:none;
+    padding:8px 14px; border:2px solid transparent; display:inline-block; transition:transform .15s ease;
+  }
+  .navrow nav a:hover{ border-color:var(--accent); color:var(--accent); }
+  .navrow nav a.active{ background:var(--accent); color:var(--accent-ink); border-color:var(--line); }
+  #progress{ height:3px; background:transparent; }
+  #progress i{ display:block; height:100%; width:0%; background:var(--accent); }
+
+  main{ display:block; }
+  section{ padding:9vh 0; border-top:3px solid var(--line); }
+  section#hero{ border-top:none; }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px; font-family:var(--font-mono); font-size:0.78rem;
+    letter-spacing:0.06em; margin-bottom:20px;
+  }
+  .eyebrow .num{ background:var(--ink); color:var(--bg); padding:3px 8px; }
+
+  .title{ font-size:clamp(1.9rem,4.6vw,3.4rem); font-weight:700; }
+  .lead{ margin-top:20px; max-width:60ch; font-size:1.08rem; line-height:1.7; color:var(--ink-dim); }
+
+  /* .reveal is fully visible by default. only hidden-then-fades-in once JS confirms it can animate it back in */
+  .anim-ready .reveal{ opacity:0; transform:translateY(16px); transition:opacity .4s ease, transform .4s ease; }
+  .anim-ready .reveal.in{ opacity:1; transform:none; }
+
+  /* ---------------- hero ---------------- */
+  #hero{ padding-top:8vh; }
+  .hero-name{ font-size:clamp(3rem,11vw,7.5rem); font-weight:700; }
+  .hero-sub{ margin-top:22px; max-width:56ch; font-size:1.2rem; line-height:1.6; color:var(--ink-dim); }
+
+  /* the eye: the one graphic that watches back */
+  .eye-wrap{ display:inline-block; width:0.72em; height:0.72em; vertical-align:-0.03em; }
+  .eye-wrap svg{ width:100%; height:100%; display:block; }
+  .eye-wrap .sclera{ fill:var(--bg); stroke:var(--line); stroke-width:6; }
+  .eye-wrap .pupil{ fill:var(--accent); }
+
+  .meta-table{
+    margin-top:36px; display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    border:3px solid var(--line); border-radius:0;
+  }
+  .meta-table div{ padding:16px 18px; border-right:3px solid var(--line); border-bottom:3px solid var(--line); }
+  .meta-table div:last-child{ border-right:none; }
+  .meta-table b{ display:block; font-family:var(--font-mono); font-size:0.68rem; letter-spacing:0.08em; color:var(--ink-dim); margin-bottom:6px; }
+  .meta-table span{ font-size:0.95rem; font-weight:500; }
+  @media (max-width:640px){ .meta-table div{ border-right:none; } }
+
+  .scroll-cue{ margin-top:34px; font-family:var(--font-mono); font-size:0.75rem; letter-spacing:0.06em; }
+  .scroll-cue::after{ content:' ↓'; }
+
+  /* ---------------- story rows ---------------- */
+  .row{ padding:6vh 0; border-top:3px solid var(--line); }
+  .row:first-of-type{ border-top:none; padding-top:2vh; }
+  .row .grid2{ display:grid; grid-template-columns:230px 1fr; gap:26px; }
+  @media (max-width:700px){ .row .grid2{ grid-template-columns:1fr; gap:12px; } }
+  .row h3{ font-size:1.3rem; font-weight:700; }
+  .row blockquote{ margin:0; max-width:58ch; font-size:1.02rem; line-height:1.7; color:var(--ink-dim); position:relative; padding-left:6px; }
+  .row blockquote::before{ content:'\201C'; font-family:var(--font-mono); font-size:2rem; color:var(--ink-dim); margin-right:4px; }
+  .row .tags{ margin-top:14px; display:flex; gap:8px; flex-wrap:wrap; }
+  .row .tags span{ font-family:var(--font-mono); font-size:0.66rem; letter-spacing:0.05em; border:2px solid var(--line); padding:4px 9px; }
+
+  /* ---------------- why ---------------- */
+  .why-body{ max-width:62ch; font-size:1.08rem; line-height:1.8; color:var(--ink-dim); margin-top:20px; }
+  .why-body strong{ color:var(--ink); }
+
+  /* ---------------- contact ---------------- */
+  .contact-links{ margin-top:32px; display:flex; flex-wrap:wrap; gap:16px; }
+  .chip{
+    font-family:var(--font-mono); font-size:0.82rem; letter-spacing:0.03em; text-decoration:none;
+    background:var(--surface); border:3px solid var(--line); box-shadow:5px 5px 0 var(--shadow);
+    padding:13px 20px; display:inline-block; transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .chip:hover{ transform:translate(5px,5px); box-shadow:0 0 0 var(--shadow); border-color:var(--accent); color:var(--accent); }
+  .chip.primary{ background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .chip.primary:hover{ color:var(--accent-ink); }
+
+  footer{
+    margin-top:8vh; padding:24px 0 40px; border-top:3px solid var(--line);
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    font-family:var(--font-mono); font-size:0.72rem; color:var(--ink-dim);
+  }
+</style>
 </head>
 <body>
-    <header>
-        <nav class="navbar">
-            <div class="navbar-content">
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#about">About</a></li>
-                    <!-- <li><a href="#blog">Blog</a></li> -->
-                    <!-- <li><a href="#projects">Projects</a></li> -->
-                </ul>
-            </div>
-        </nav>
-    </header>
 
-    <section id="home" class="hero">
-        <img src="images/logo.png" alt="Logo" class="logo">
-        <h1>Sanat Ladkat</h1>
-        <h2>Integrating Creativity & Technology for Innovative Solutions</h2>
-        <p>From shaping dynamic spaces to crafting intelligent solutions<br> My journey merges the worlds of design and technology<br></p>
-        <div class="social-icons">
-            <a href="https://www.linkedin.com/in/sanatl/" target="_blank" class="icon">
-                <i class="fab fa-linkedin"></i> LinkedIn
-            </a>
-            <a href="https://medium.com/@arsanatl" target="_blank" class="icon">
-                <i class="fab fa-medium"></i> Medium
-            </a>
-            <a href="https://github.com/sanatladkat" target="_blank" class="icon">
-                <i class="fab fa-github"></i> GitHub
-            </a>
-        </div>
+<header class="bar">
+  <div class="navrow">
+    <a class="mark" href="#hero">SANAT LADKAT</a>
+    <nav id="navlinks">
+      <a href="#story">STORY</a>
+      <a href="#why">WHY</a>
+      <a href="#philosophy">PHILOSOPHY</a>
+      <a href="#contact">CONTACT</a>
+    </nav>
+  </div>
+  <div id="progress"><i></i></div>
+</header>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="scanlines" aria-hidden="true"></div>
+<div id="trail" aria-hidden="true"></div>
+
+<main>
+  <div class="wrap">
+
+    <section id="hero">
+      <span class="ghost" aria-hidden="true">00</span>
+      <span class="vf vf-tl decor" aria-hidden="true"></span>
+      <span class="vf vf-tr decor" aria-hidden="true"></span>
+      <span class="vf vf-bl decor" aria-hidden="true"></span>
+      <span class="vf vf-br decor" aria-hidden="true"></span>
+      <div class="eyebrow"><span class="num">00</span> GEOSPATIAL AI · ML ENGINEER</div>
+      <h1 class="hero-name">SANAT<br>LADKAT<span class="eye-wrap" id="eye" aria-hidden="true"><svg viewBox="0 0 100 100"><circle class="sclera" cx="50" cy="50" r="44"/><circle class="pupil" id="pupil" cx="50" cy="50" r="18"/></svg></span></h1>
+      <p class="hero-sub">I've spent years learning to see space clearly: a building, then a screen, now a satellite. The eye stayed the same. Only the canvas kept changing.</p>
+      <div class="meta-table">
+        <div><b>BACKGROUND</b><span>B.Arch → M.Des → M.Tech, Data Science</span></div>
+        <div><b>BUILDING</b><span>AI/ML for geospatial data</span></div>
+        <div><b>BASED IN</b><span>Pune, India</span></div>
+        <div><b>OPEN TO</b><span>Good conversations: people, problems, or capital worth believing in</span></div>
+      </div>
+      <p class="scroll-cue">KEEP SCROLLING. IT GETS BETTER.</p>
     </section>
 
-    <section id="about" style="padding: 40px; background-color: #f4f4f4;">
-        <div class="container">
-          <h3>About Me</h3>
-          <p>I've always been fascinated by the intersection of creativity, design, and technology. My career has been an evolving journey where I’ve had the privilege of blending these passions in ways that drive meaningful impact.</p>
-      
-          <p>It all started with <strong>Architecture (B.Arch)</strong>, where I learned how to shape spaces that aren’t just functional, but also evoke emotion and enhance human interaction. Architecture taught me how to think spatially, prioritize user needs, and find beauty in every detail—skills that have stuck with me throughout my career.</p>
-      
-          <p>From there, my curiosity led me to <strong>UX/UI Design (M.Des)</strong>, where I discovered how the world of digital experiences can be just as impactful as physical spaces. This is where I truly understood the importance of intuitive design and how small details can make a big difference in how users interact with technology. I became obsessed with creating user-centered solutions that are not only functional but also engaging and seamless.</p>
-      
-          <p>The next natural step in my journey was diving deep into <strong>Data Science and AI (PGD + M.Tech)</strong>. I wanted to harness the power of data to solve real-world problems in innovative ways. Through this, I’ve gained the skills to transform complex data into meaningful insights and intelligent systems—skills that have opened up a whole new world of possibilities for me.</p>
-      
-          <p>Now, as a <strong>Machine Learning Engineer</strong>, I’m in my element, combining everything I’ve learned. Whether it’s working with Python, developing computer vision models, or applying machine learning algorithms, I’m constantly inspired by how technology can solve problems in creative and impactful ways. I focus on building solutions that are not only technically sound but also user-centered—because at the end of the day, the most powerful technology is the one that truly serves people.
-      
-          What excites me the most is the opportunity to keep learning and growing, blending my love for design with the endless potential of data science and AI to make a real difference.</p>
+    <div class="hazard"></div>
+    <div class="marquee"><div class="track">
+      <span>ARCHITECT</span><span>INTERIOR DESIGNER</span><span>PHOTOGRAPHER</span><span>COMPUTATIONAL DESIGNER</span><span>PRODUCT DESIGNER</span><span>ML ENGINEER</span>
+      <span>ARCHITECT</span><span>INTERIOR DESIGNER</span><span>PHOTOGRAPHER</span><span>COMPUTATIONAL DESIGNER</span><span>PRODUCT DESIGNER</span><span>ML ENGINEER</span>
+    </div></div>
+
+    <section id="story">
+      <span class="ghost" aria-hidden="true">01</span>
+      <div class="eyebrow"><span class="num">01</span> HOW I GOT HERE</div>
+      <h2 class="title reveal">Three schools.<br>One obsession.</h2>
+      <p class="lead reveal">Architecture taught me to see space. Design taught me to shape it. Data science taught me to scale it.</p>
+
+      <div class="row reveal">
+        <div class="grid2">
+          <div class="row-label">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 L12 4 L21 11 M5 10V20H19V10 M10 20V14H14V20"/></svg>
+            <h3>01 · Architecture</h3>
+          </div>
+          <div>
+            <blockquote>Learned how to shape spaces that aren't just functional, but also evoke emotion and enhance human interaction. It taught me how to think spatially, prioritize user needs, and find beauty in every detail.</blockquote>
+            <div class="tags"><span>B.ARCH</span><span>SPATIAL THINKING</span></div>
+          </div>
         </div>
-      </section>
-      
+      </div>
+      <div class="row reveal">
+        <div class="grid2">
+          <div class="row-label">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18 C 8 18, 8 6, 12 6 S 16 18, 21 18"/><circle cx="3" cy="18" r="1.6" fill="currentColor" stroke="none"/><circle cx="21" cy="18" r="1.6" fill="currentColor" stroke="none"/></svg>
+            <h3>02 · UX/UI Design</h3>
+          </div>
+          <div>
+            <blockquote>Discovered how digital experiences can be just as impactful as physical spaces. Became obsessed with creating user-centered solutions that are not only functional but also engaging and seamless.</blockquote>
+            <div class="tags"><span>M.DES</span><span>USER-CENTERED</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="row reveal">
+        <div class="grid2">
+          <div class="row-label">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="17" r="2"/><circle cx="12" cy="7" r="2"/><circle cx="19" cy="14" r="2"/><path d="M6.6 15.6 L10.4 8.8 M13.6 8.2 L17.4 12.4"/></svg>
+            <h3>03 · Data Science</h3>
+          </div>
+          <div>
+            <blockquote>Wanted to harness the power of data to solve real-world problems in innovative ways. Gained the skills to transform complex data into meaningful insights and intelligent systems.</blockquote>
+            <div class="tags"><span>M.TECH, DATA SCIENCE</span><span>APPLIED ML</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="row reveal">
+        <div class="grid2">
+          <div class="row-label">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="6" height="6" transform="rotate(45 12 12)"/><path d="M4 4 L8 8 M20 4 L16 8 M4 20 L8 16 M20 20 L16 16"/></svg>
+            <h3>Now · Geospatial AI</h3>
+          </div>
+          <div>
+            <blockquote>Now, as a Machine Learning Engineer, I'm in my element, combining everything I've learned. Developing computer vision models and applying machine learning to real problems, I'm constantly inspired by how technology can solve them in creative and impactful ways.</blockquote>
+            <div class="tags"><span>COMPUTER VISION</span><span>GEOSPATIAL AI</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <div class="container">
-        <!-- <section id="blog" class="section">
-            <h3>Blog</h3>
-            <div class="scroll-container" id="blog-scroll"></div>
-        </section> -->
-        <!-- <section id="projects" class="section">
-            <h3>Projects</h3>
-            <div class="scroll-container" id="projects-scroll"></div>
-        </section> -->
-    </div>
+    <section id="why">
+      <span class="ghost" aria-hidden="true">02</span>
+      <span class="torn decor" aria-hidden="true"></span>
+      <div class="eyebrow"><span class="num">02</span> IN MY OWN WORDS</div>
+      <h2 class="title reveal">The most powerful<br>technology is the one<br>that truly serves people.</h2>
+      <p class="why-body reveal">What excites me most is the opportunity to keep learning and growing: blending my love for design with the endless potential of data science and AI to make a real difference. Architecture, design, and machine learning weren't separate detours. Each one did the same job on a different material: understand the space, then build something that actually serves the people in it.</p>
+    </section>
 
-    <footer>
-        <p>© 2024 Sanat Ladkat. All Rights Reserved.</p>
-    </footer>
+    <section id="philosophy">
+      <span class="ghost" aria-hidden="true">03</span>
+      <svg class="stamp-spin decor" viewBox="0 0 200 200" aria-hidden="true">
+        <defs><path id="stamp-circle" d="M 100,100 m -78,0 a 78,78 0 1,1 156,0 a 78,78 0 1,1 -156,0"/></defs>
+        <text font-family="var(--font-mono)" font-size="12" font-weight="700" letter-spacing="2" fill="var(--ink)">
+          <textPath href="#stamp-circle">LEARN · UNLEARN · RELEARN · LEARN · UNLEARN · RELEARN ·</textPath>
+        </text>
+        <circle cx="100" cy="100" r="30" fill="none" stroke="var(--line)" stroke-width="2"/>
+      </svg>
+      <div class="eyebrow"><span class="num">03</span> THE PHILOSOPHY</div>
+      <h2 class="title reveal">Learn. Unlearn.<br>Relearn.</h2>
+      <p class="lead reveal">Jack of all trades, master of some, was never an insult. It's the only way to stay useful when everything worth knowing keeps changing.</p>
+      <p class="lead reveal">It started with buildings: an architect's eye for how a room breathes, then an interior designer's eye for how a room feels. Somewhere in there, a camera showed up, and photography and videography became just another way of asking the same question: what makes a space worth looking at?</p>
+      <p class="lead reveal">Then the tools changed again. Parametric architecture and computational design turned that same eye loose on code, drawing buildings out of algorithms instead of a pencil. Product design followed close behind: shaping things people could hold in their hands, and things they could only tap on a screen.</p>
+      <p class="lead reveal">The latest stop is an AEC startup, teaching software to do something an architect usually does slowly by hand: read a floor plan and turn it into a full BIM model. Different tool every time. Same question, asked five different ways.</p>
+    </section>
 
-    <script src="js/scripts.js"></script>
+    <div class="marquee"><div class="track">
+      <span>LEARN</span><span>UNLEARN</span><span>RELEARN</span><span>LEARN</span><span>UNLEARN</span><span>RELEARN</span>
+      <span>LEARN</span><span>UNLEARN</span><span>RELEARN</span><span>LEARN</span><span>UNLEARN</span><span>RELEARN</span>
+    </div></div>
+    <div class="hazard"></div>
+
+    <section id="contact">
+      <span class="ghost" aria-hidden="true">04</span>
+      <div class="eyebrow"><span class="num">04</span> CONTACT</div>
+      <h2 class="title reveal">If this sounds like<br>your problem too,<br>let's talk.</h2>
+      <p class="lead reveal">Collaborators. Hard problems. People who want to build something that outlives a demo day. That's who I want to hear from.</p>
+      <div class="contact-links reveal">
+        <a class="chip primary" href="https://www.linkedin.com/in/sanatl/" target="_blank" rel="noopener">DM ON LINKEDIN ↗</a>
+        <a class="chip" href="https://github.com/sanatladkat" target="_blank" rel="noopener">GITHUB ↗</a>
+        <a class="chip" href="https://www.behance.net/sanatl" target="_blank" rel="noopener">BEHANCE ↗</a>
+        <a class="chip" href="https://medium.com/@arsanatl" target="_blank" rel="noopener">MEDIUM ↗</a>
+        <a class="chip" href="https://www.kaggle.com/sanatladkat" target="_blank" rel="noopener">KAGGLE ↗</a>
+      </div>
+      <footer>
+        <span>SANAT LADKAT · PUNE, INDIA</span>
+        <span id="year">© 2026</span>
+      </footer>
+    </section>
+
+  </div>
+</main>
+
+<script>
+(function(){
+  document.getElementById('year').textContent = '© ' + new Date().getFullYear();
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* reveal on scroll. only opt into the hidden/fade-in state once JS is confirmed running */
+  var revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !reduced){
+    document.body.classList.add('anim-ready');
+    var ro = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); ro.unobserve(e.target); } });
+    }, { threshold:0.15 });
+    revealEls.forEach(function(el){ ro.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* scrollspy: highlight the nav link for the section in view */
+  var links = document.querySelectorAll('#navlinks a');
+  var sections = ['hero','story','why','philosophy','contact'].map(function(id){ return document.getElementById(id); });
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){
+          var id = entry.target.id;
+          links.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === '#' + id); });
+        }
+      });
+    }, { threshold:0.5 });
+    sections.forEach(function(s){ if(s) io.observe(s); });
+  }
+
+  /* progress bar */
+  var bar = document.querySelector('#progress i');
+  function updateProgress(){
+    var h = document.documentElement;
+    var pct = Math.min(100, Math.max(0, h.scrollTop / (h.scrollHeight - h.clientHeight) * 100));
+    if(bar) bar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', function(){ requestAnimationFrame(updateProgress); }, {passive:true});
+  updateProgress();
+
+  var fine = window.matchMedia('(pointer:fine)').matches;
+
+  if(fine && !reduced){
+    var mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
+    window.addEventListener('mousemove', function(e){ mouseX = e.clientX; mouseY = e.clientY; }, {passive:true});
+
+    /* the eye: pupil looks at the cursor, wherever it is on the page */
+    var eye = document.getElementById('eye');
+    var pupil = document.getElementById('pupil');
+    if(eye && pupil){
+      (function trackEye(){
+        var r = eye.getBoundingClientRect();
+        var cx = r.left + r.width/2, cy = r.top + r.height/2;
+        var dx = mouseX - cx, dy = mouseY - cy;
+        var dist = Math.min(12, Math.hypot(dx, dy) / 8);
+        var angle = Math.atan2(dy, dx);
+        pupil.setAttribute('cx', 50 + Math.cos(angle) * dist);
+        pupil.setAttribute('cy', 50 + Math.sin(angle) * dist);
+        requestAnimationFrame(trackEye);
+      })();
+    }
+
+    /* cursor trail: a graphic layer riding a step behind the real cursor */
+    var trail = document.getElementById('trail');
+    if(trail){
+      var tx = mouseX, ty = mouseY;
+      trail.classList.add('on');
+      (function moveTrail(){
+        tx += (mouseX - tx) * 0.16;
+        ty += (mouseY - ty) * 0.16;
+        trail.style.transform = 'translate3d(' + tx + 'px,' + ty + 'px,0) translate(-50%,-50%)';
+        requestAnimationFrame(moveTrail);
+      })();
+      document.querySelectorAll('a, button').forEach(function(el){
+        el.addEventListener('mouseenter', function(){ trail.classList.add('hover'); });
+        el.addEventListener('mouseleave', function(){ trail.classList.remove('hover'); });
+      });
+    }
+
+    /* magnetic nav: links nudge toward the cursor when it's near */
+    document.querySelectorAll('.navrow nav a').forEach(function(el){
+      el.addEventListener('mousemove', function(e){
+        var r = el.getBoundingClientRect();
+        var dx = e.clientX - (r.left + r.width/2), dy = e.clientY - (r.top + r.height/2);
+        el.style.transform = 'translate(' + (dx*0.25) + 'px,' + (dy*0.25) + 'px)';
+      });
+      el.addEventListener('mouseleave', function(){ el.style.transform = 'none'; });
+    });
+
+    /* ghost numerals drift slightly with the cursor, a slab that leans */
+    var ghosts = document.querySelectorAll('.ghost');
+    if(ghosts.length){
+      (function driftGhosts(){
+        var nx = (mouseX / window.innerWidth - 0.5) * 2;
+        var ny = (mouseY / window.innerHeight - 0.5) * 2;
+        ghosts.forEach(function(g){ g.style.transform = 'translate(' + (nx*10) + 'px,' + (ny*10) + 'px)'; });
+        requestAnimationFrame(driftGhosts);
+      })();
+    }
+  }
+})();
+</script>
 </body>
 </html>
